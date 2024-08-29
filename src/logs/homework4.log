@@ -1,0 +1,10 @@
+2024-08-29 00:18:42.264 [main] INFO  com.solvd.laba.Executor - Program start successful.
+2024-08-29 00:18:42.279 [main] ERROR com.solvd.laba.Executor - Failed to add passenger to flight. Error: {DoubleBookException}
+2024-08-29 00:18:42.279 [main] ERROR com.solvd.laba.Executor - Failed to retrieve passenger information. Error: {NullPassengerException}
+2024-08-29 00:18:42.280 [main] ERROR com.solvd.laba.Executor - Failed to retrieve seat information. Error: {NullSeatException}
+2024-08-29 00:18:42.284 [main] WARN  com.solvd.laba.Executor - Receiving user input.
+2024-08-29 00:18:47.982 [main] INFO  com.solvd.laba.Executor - User input successful.
+2024-08-29 00:18:47.985 [main] WARN  com.solvd.laba.Executor - Over weight luggage created.
+2024-08-29 00:18:47.985 [main] ERROR com.solvd.laba.Executor - Failed to add passenger luggage. Error: {OversizeBagException}
+2024-08-29 00:18:47.985 [main] ERROR com.solvd.laba.Executor - Failed to add passenger luggage. Error {OverLimitException}
+2024-08-29 00:18:47.985 [main] INFO  com.solvd.laba.Executor - Program success. Shutting down...
