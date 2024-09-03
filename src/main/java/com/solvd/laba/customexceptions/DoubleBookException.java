@@ -1,4 +1,4 @@
-package com.solvd.laba;
+package com.solvd.laba.customexceptions;
 
 public class DoubleBookException extends Exception {
 

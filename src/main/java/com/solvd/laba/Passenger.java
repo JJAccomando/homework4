@@ -1,94 +1,123 @@
 package com.solvd.laba;
 
+import com.solvd.laba.customexceptions.*;
+import com.solvd.laba.myinterfaces.PassengerInterface;
 import com.solvd.laba.myinterfaces.UniqueIdInterface;
 
-public class Passenger implements UniqueIdInterface {
+public class Passenger implements UniqueIdInterface, PassengerInterface {
 
-    private static final int MAX_LUGGAGE;
-    private static int numPassengers;
+    private final int ID;
+    private static int numPassengers = 0;
     private String firstName, lastName;
-    private int iD = 0, countBags = 0;
+    private int countBags = 0;
     public Luggage[] myBags = new Luggage[MAX_LUGGAGE];
     private Seat seat;
 
-    static 
-    {
-        numPassengers = 0;
-        MAX_LUGGAGE = 10;
-    }
-
-    //Passenger Class constructor 
-    //creates new passenger with first and last name as given String parameters
+    //Passenger Object constructor 
     public Passenger(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.iD = ++numPassengers;
+        this.ID = ++numPassengers;
     }
 
+    //returns current number of Passenger Objects instantiated
+    public static final int getNumPassengers() {
+        return numPassengers;
+    }
+
+
+
+    ////////////// PassengerInterface Overrides //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //returns Passenger Object's first name
+    @Override
     public final String getFirstName() {
         return firstName;
     }
 
+    //returns Passenger Object's last name
+    @Override
     public final String getLastName() {
         return lastName;
     }
 
-    //creates a Luggage or OversizeLuggage object depending on the int parameter
-    //adds bag to the "myBags" array if array is not full
-    public final void addBags(Luggage bag) throws OversizeBagException, OverLimitException {
+    //adds Luggage Object to Passenger Object's array of Luggage and returns true
+    //does not add Luggage Object if Luggage weight is over 50lbs or Passenger Luggage array is full
+    @Override
+    public final boolean addBags(Luggage bag) throws OversizeBagException, OverLimitException {
         if (countBags >= MAX_LUGGAGE) 
-            throw new OverLimitException();
+            throw new OverLimitException("Passenger has maximum number of luggage!");
         if (bag.isOverweight())
-            throw new OversizeBagException();
+            throw new OversizeBagException("luggage cannot exceed maximum weight of 50lbs!");
         myBags[countBags++] = bag;
-        return;
+        return true;
     }
 
-    //returns total number of bags this passenger has
+    //returns total number of Luggage Object's Passenger has
+    @Override
     public final int getNumBags() {
         return countBags;
     }
 
-    //assigns passenger with a seat number 
-    //method is called in Flight Class when booking a passenger to a flight
-    public final void setSeatNum(Seat seat) {
+    //assigns Passenger Object with a Seat unless Passenger's current Seat is the same as the new Seat
+    @Override
+    public final void setSeatNum(Seat seat) throws DoubleBookException {
+        if (this.seat != null && this.seat.equals(seat)) {
+            throw new DoubleBookException("Passenger has already been assigned this seat!");
+        }
         this.seat = seat;
     }
 
-    //returns this passengers seat number
-    //if passenger does not belong to a flight then this will return -1
+    //returns Passenger Object's assigned Seat if Passenger has assigned Seat
+    @Override
     public final Seat getSeat() throws NullSeatException {
         if (seat == null)
             throw new NullSeatException("Passenger does not have assigned seat!");
         return seat;
     }
 
-    //returns unique id number created for every new passenger
+    //returns array containing Passenger Object's Luggage Objects if Passenger has at least 1 Luggage
     @Override
-    public final int getId() {
-        return iD;
+    public final Luggage[] getLuggage() throws NullBagException {
+        if (countBags == 0)
+            throw new NullBagException("Passenger does not have any luggage!");
+        return myBags;
     }
 
-    //returns a String of a Passenger object as that object's id number
+
+
+    ////////////// UniqueIdInterface Overrides ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //returns Passenger Object's ID#
+    @Override
+    public final int getId() {
+        return ID;
+    }
+
+
+
+    ////////////// Object Class Overrides ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //returns a String of a Passenger Object as that Object's "firstName", "lastName",  and ID#
     @Override
     public final String toString() {
-        String myString = String.format("Passenger ID#: %d", iD);
+        String myString = String.format("Passenger %1$s %2$s\nPassenger#: %d", firstName, lastName, ID);
         return myString;
     }
 
-    //compares 2 Passenger objects by comparing their object Strings
+    //compares 2 Passenger Objects by comparing their Object's hashcodes
     @Override
     public final boolean equals(Object obj) {
         if (obj == this)
             return true;
         if (obj instanceof Passenger) {
             Passenger cast = (Passenger)obj;
-            return this.getId() == cast.getId();
+            return this.hashCode() == cast.hashCode();
         }
         return false;
     }
 
-    //Passenger objects hash code is set to its unique id#
+    //Passenger Object's hashcode is set to its unique ID#
     @Override
     public final int hashCode() {
         return this.getId();

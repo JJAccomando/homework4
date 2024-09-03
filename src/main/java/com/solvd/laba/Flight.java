@@ -1,145 +1,58 @@
 package com.solvd.laba;
 
-import com.solvd.laba.myenums.SeatType;
+import com.solvd.laba.myenums.*;
+import com.solvd.laba.customexceptions.DoubleBookException;
+import com.solvd.laba.customexceptions.NullPassengerException;
+import com.solvd.laba.myinterfaces.FlightInterface;
 import com.solvd.laba.myinterfaces.UniqueIdInterface;
 
 
-public final class Flight implements UniqueIdInterface {
+public final class Flight implements UniqueIdInterface, FlightInterface {
 
-    private static enum PlaneType {
-        A380(16, 4, 90, 
-        6, 410, 10, 518, "Airbus", "A380"),
-        A320(14, 2, 20, 
-        4, 112, 7, 146, "Airbus", "A320"),
-        B737(4, 2, 12, 
-        4, 102, 6, 118, "Boeing", "737");
-
-        final int SEATS_IN_FIRST;
-        final int SEATS_IN_BUSINESS;
-        final int SEATS_IN_ECON;
-        final int TOTAL_SEATS;
-        final int NUM_COLUMNS_FIRST;
-        final int NUM_COLUMNS_BUSINESS;
-        final int NUM_COLUMNS_ECON;
-
-        final String COMPANY;
-        final String CLASSIFICATION;
-
-        PlaneType(int seatsInFirst, int numColumnFirst, int seatsInBusiness, int numColumnBus, 
-        int seatsInEcon, int numColumnEcon, int totalSeats, String company, String classification) {
-            this.SEATS_IN_FIRST = seatsInFirst;
-            this.SEATS_IN_BUSINESS = seatsInBusiness;
-            this.SEATS_IN_ECON = seatsInEcon;
-            this.TOTAL_SEATS = totalSeats;
-            this.COMPANY = company;
-            this.CLASSIFICATION = classification;
-            this.NUM_COLUMNS_FIRST = numColumnFirst;
-            this.NUM_COLUMNS_BUSINESS = numColumnBus;
-            this.NUM_COLUMNS_ECON = numColumnEcon;
-        }
-    }
-
-    private PlaneType planeType;
+    private final int ID;
     public static int numFlights = 0;
     private String flightNum, departFrom, arriveTo;
+    private PlaneType planeType;
     private AirplaneBase plane;
     private Passenger[] passengers;
-    private Seat[] firstClassSeats, businessClassSeats, economyClassSeats;  
-    private int seatsAvailable, seatsInFirstCount = 0, seatsInBusinessCount = 0, seatsInEconCount = 0, numPassengers = 0, iD = 0;
-    
+    private int seatsAvailable, seatsInFirstCount = 0, seatsInBusinessCount = 0, seatsInEconCount = 0, numPassengers = 0;
 
-    //Flight Class constructor 
-    //assigns most fields with information dependent on each plane type
-    //allocates memory for Passenger and Seat arrays
-    //populates Seat array with seat objects
+    //Flight Object constructor 
     public Flight(AirplaneBase myPlane, String departFrom, String arriveTo) {
         this.plane = myPlane;
-        this.setPlaneType(myPlane);
+        this.planeType = myPlane.getPlaneType();
         this.seatsAvailable = planeType.TOTAL_SEATS;
         this.flightNum = planeType.CLASSIFICATION + plane.getId();
         this.departFrom = departFrom;
         this.arriveTo = arriveTo;
         this.passengers = new Passenger[planeType.TOTAL_SEATS];
-        this.populateSeats();
-        this.iD = ++numFlights;
+        this.ID = ++numFlights;
     }
 
-    //sets enum PlaneType depending on Object instance
-    private final void setPlaneType(AirplaneBase plane) {
-        if (plane instanceof AirbusA380) {
-            planeType = PlaneType.A380; 
-        } else if (plane instanceof AirbusA320) {
-            planeType = PlaneType.A320;
-        } else if (plane instanceof Boeing737) {
-            planeType = PlaneType.B737;
-        }
-    } 
-
-    //populates Seat array with seats based on rows and columns 
-    //ex: 4 columns means seats will have letters A, B, C, or D
-    //rows are seat numbers
-    //so row 1 with 4 columns would have seats 1A, 1B, 1C, and 1D
-    private final void populateSeats() {
-        firstClassSeats = new Seat[planeType.SEATS_IN_FIRST];
-        businessClassSeats = new Seat[planeType.SEATS_IN_BUSINESS];
-        economyClassSeats = new Seat[planeType.SEATS_IN_ECON];
-        int first = planeType.SEATS_IN_FIRST;
-        int totalRowFirst = (first / planeType.NUM_COLUMNS_FIRST);
-        int bus = planeType.SEATS_IN_BUSINESS;
-        int totalRowBus = (bus / planeType.NUM_COLUMNS_BUSINESS);
-        int econ = planeType.SEATS_IN_ECON;
-        int totalRowEcon = (econ / planeType.NUM_COLUMNS_ECON);
-
-        for (int row = 1; row <= totalRowFirst; row++) {
-            char seatLetter = 'A';
-            for (int i = 0; i < planeType.NUM_COLUMNS_FIRST; i++) {
-                Seat seat = new Seat(row, seatLetter);
-                for (int j = 0; j < firstClassSeats.length; j++) {
-                    if (firstClassSeats[j] == null) {
-                        firstClassSeats[j] = seat;
-                        break;
-                    }
-                }
-                ++seatLetter; 
-            }
-        }
-
-        for (int row = totalRowFirst + 1; row <= totalRowFirst + totalRowBus; row++) {
-            char seatLetter = 'A';
-            for (int i = 0; i < planeType.NUM_COLUMNS_BUSINESS; i++) {
-                Seat seat = new Seat(row, seatLetter);
-                for (int j = 0; j < businessClassSeats.length; j++) {
-                    if (businessClassSeats[j] == null) {
-                        businessClassSeats[j] = seat;
-                        break;
-                    }
-                }
-                ++seatLetter; 
-            }
-        }
-
-        for (int row = totalRowFirst + totalRowBus + 1; row <= totalRowFirst + totalRowBus + totalRowEcon; row++) {
-            char seatLetter = 'A';
-            for (int i = 0; i < planeType.NUM_COLUMNS_ECON; i++) {
-                Seat seat = new Seat(row, seatLetter);
-                for (int j = 0; j < economyClassSeats.length; j++) {
-                    if (economyClassSeats[j] == null) {
-                        economyClassSeats[j] = seat;
-                        break;
-                    }
-                }
-                ++seatLetter; 
-            }
-        }
-        
+    //returns current number of Flight Objects instantiated
+    public static final int getNumFlights() {
+        return numFlights;
     }
 
-    //returns available seats on flight inclusive
+    //adds Passenger to Flight Object by storing the Passenger in the Flight Object's Passenger array
+    //this method is called inside bookSeat method which already checks for Seat availability
+    //bookSeat method will only call this method if a Seat is available so a Passenger will always be able to be added to the array when this method is called
+    private final void addPassenger(Passenger person) {
+        passengers[numPassengers++] = person;
+    }
+
+
+
+    ////////////// FlightInterface Overrides /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //returns true if Flight Object has any availability regardless of SeatType
+    @Override
     public final boolean getSeatsAvailable() {
         return seatsAvailable > 0;
     }
 
-    //returns available seats on flight for specific seatType
+    //returns true if there are available Seats for given SeatType
+    @Override
     public final boolean getSeatsAvailable(SeatType seatType) {
         switch (seatType) {
             case FIRST_CLASS:
@@ -154,14 +67,8 @@ public final class Flight implements UniqueIdInterface {
         return false;
     }
 
-    //returns flight ID#
+    //adds a Passenger to the Flight Object Passenger array and assigns Passenger a Seat based on SeatType
     @Override
-    public final int getId() {
-        return iD;
-    }
- 
-    //adds a passenger to a flight and assigns a seat number based on requested class
-    //then the passenger is added to the array of passengers
     public final boolean bookSeat(Passenger person, SeatType seatType) throws DoubleBookException {
         for (int i = 0; i < passengers.length; i++) {
             if (person.equals(passengers[i]))
@@ -170,18 +77,18 @@ public final class Flight implements UniqueIdInterface {
         if (getSeatsAvailable(seatType)) {
             switch (seatType) {
                 case FIRST_CLASS:
-                    firstClassSeats[seatsInFirstCount].addPassenger(person);
-                    person.setSeatNum(firstClassSeats[seatsInFirstCount++]);
+                    plane.assignSeat(person, seatsInFirstCount, seatType);
+                    seatsInFirstCount++;
                     break;
 
                 case BUSINESS_CLASS:
-                    businessClassSeats[seatsInBusinessCount].addPassenger(person);
-                    person.setSeatNum(businessClassSeats[seatsInBusinessCount++]);
+                    plane.assignSeat(person, seatsInBusinessCount, seatType);
+                    seatsInBusinessCount++;
                     break;
 
                 case ECONOMY_CLASS:
-                    economyClassSeats[seatsInEconCount].addPassenger(person);
-                    person.setSeatNum(economyClassSeats[seatsInEconCount++]);
+                    plane.assignSeat(person, seatsInEconCount, seatType);
+                    seatsInEconCount++;
                     break;
                     
                 default:
@@ -194,50 +101,65 @@ public final class Flight implements UniqueIdInterface {
         return false;
     }
 
-    //adds passenger to the flight by storing the passenger in the flights list of passengers array
-    //this method is called inside bookSeat method which already checks for seat availability
-    //therefore; if this method is called, a passenger will always be able to be added to array
-    private final void addPassenger(Passenger person) {
-        passengers[numPassengers++] = person;
-    }
-
+    //returns Flight Object's number of Passengers
+    @Override
     public final int getNumPassengers() {
         return numPassengers;
     }
 
-    public final Passenger getPassenger(int index) throws NullPassengerException {
-        if (passengers[index] == null)
-            throw new NullPassengerException("Flight does not contain passenger at index: " + index);
-        return passengers[index];
+    //returns Passenger array from Flight Object if array is not empty
+    @Override
+    public final Passenger[] getPassengers() throws NullPassengerException {
+        if (numPassengers == 0)
+            throw new NullPassengerException("Flight does not contain any passengers!");
+        return passengers;
     }
 
-    public final String printFlightInfo() {
-        String passengers = String.format("Number of passengers: %d", numPassengers);
-        String myString = String.format("Flight#: %1$s\nDeparting from: %2$s\nArriving to: %3$s\n%4$s\nPlane: %5$s %6$s"
-        , flightNum, departFrom, arriveTo, passengers, planeType.COMPANY, planeType.CLASSIFICATION);
+    //returns Flight Object general information as a String
+    @Override
+    public final String flightInfo() {
+        String flightNumber = "Flight#: " + flightNum;
+        String departingFrom = "Departing from: " + departFrom;
+        String arrivingTo = "Arriving to: " + arriveTo;
+        String passengers = "Number of passengers: " + numPassengers;
+        String planeInfo = String.format("Plane: %1$s %2$s", planeType.COMPANY, planeType.CLASSIFICATION);
+        String myString = String.format("%1$s\n%2$s\n%3$s\n%4$s\n%5$s", flightNumber, departingFrom, arrivingTo, passengers, planeInfo);
         return myString;
     }
 
-    //returns a String of a Flight object as unique flight information
+
+
+    ////////////// UniqueIdInterface Overrides ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    //returns Flight Object's ID#
+    @Override
+    public final int getId() {
+        return ID;
+    }
+
+
+
+    ////////////// Object Class Overrides ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //returns a String of a Flight Object as the Object's "flightNum"
     @Override
     public final String toString() {
-        String myString = String.format("Flight#: %s", flightNum);
-        return myString;
+        return "Flight#: " + flightNum;
     }
 
-    //compares 2 Flight objects by comparing their object Strings
+    //compares 2 Flight Object's by comparing their Object's hashcodes
     @Override
     public final boolean equals(Object obj) {
         if (obj == this)
             return true;
         if (obj instanceof Flight) {
             Flight cast = (Flight)obj;
-            return this.getId() == cast.getId();
+            return this.hashCode() == cast.hashCode();
         }
         return false;
     }
 
-    //Flight objects hash code is set to its id#
+    //Flight Object's hashcode is set to its ID#
     @Override
     public final int hashCode() {
         return this.getId();
