@@ -101,7 +101,7 @@ public class Passenger implements UniqueIdInterface, PassengerInterface {
     //returns a String of a Passenger Object as that Object's "firstName", "lastName",  and ID#
     @Override
     public final String toString() {
-        String myString = String.format("Passenger %1$s %2$s\nPassenger#: %d", firstName, lastName, ID);
+        String myString = String.format("Passenger %1$s %2$s\nPassenger#: %3$d", firstName, lastName, ID);
         return myString;
     }
 
