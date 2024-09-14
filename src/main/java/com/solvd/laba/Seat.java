@@ -1,6 +1,6 @@
 package com.solvd.laba;
 
-import com.solvd.laba.customexceptions.NullPassengerException;
+import com.solvd.laba.customexceptions.EmptyPassengerException;
 import com.solvd.laba.myinterfaces.SeatInterface;
 import com.solvd.laba.myinterfaces.UniqueIdInterface;
 
@@ -32,9 +32,9 @@ public final class Seat implements UniqueIdInterface, SeatInterface {
     //returns Passenger Object assigned to this Seat Object
     //throws exception if no Passenger was assigned
     @Override
-    public final Passenger getPassenger() throws NullPassengerException {
+    public final Passenger getPassenger() throws EmptyPassengerException {
         if (!availabe) 
-            throw new NullPassengerException("Seat has no assigned passenger!");
+            throw new EmptyPassengerException("Seat has no assigned passenger!");
         return passenger;
     }
 

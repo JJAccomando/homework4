@@ -61,26 +61,26 @@ public class Passenger implements UniqueIdInterface, PassengerInterface {
 
     //assigns Passenger Object with a Seat unless Passenger's current Seat is the same as the new Seat
     @Override
-    public final void setSeatNum(Seat seat) throws DoubleBookException {
+    public final void setSeatNum(Seat seat) throws DuplicateBookingException {
         if (this.seat != null && this.seat.equals(seat)) {
-            throw new DoubleBookException("Passenger has already been assigned this seat!");
+            throw new DuplicateBookingException("Passenger has already been assigned this seat!");
         }
         this.seat = seat;
     }
 
     //returns Passenger Object's assigned Seat if Passenger has assigned Seat
     @Override
-    public final Seat getSeat() throws NullSeatException {
+    public final Seat getSeat() throws EmptySeatException {
         if (seat == null)
-            throw new NullSeatException("Passenger does not have assigned seat!");
+            throw new EmptySeatException("Passenger does not have assigned seat!");
         return seat;
     }
 
     //returns array containing Passenger Object's Luggage Objects if Passenger has at least 1 Luggage
     @Override
-    public final Luggage[] getLuggage() throws NullBagException {
+    public final Luggage[] getLuggage() throws EmptyBagException {
         if (countBags == 0)
-            throw new NullBagException("Passenger does not have any luggage!");
+            throw new EmptyBagException("Passenger does not have any luggage!");
         return myBags;
     }
 

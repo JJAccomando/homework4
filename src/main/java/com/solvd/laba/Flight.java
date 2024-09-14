@@ -1,8 +1,8 @@
 package com.solvd.laba;
 
+import com.solvd.laba.customexceptions.DuplicateBookingException;
+import com.solvd.laba.customexceptions.EmptyPassengerException;
 import com.solvd.laba.myenums.*;
-import com.solvd.laba.customexceptions.DoubleBookException;
-import com.solvd.laba.customexceptions.NullPassengerException;
 import com.solvd.laba.myinterfaces.FlightInterface;
 import com.solvd.laba.myinterfaces.UniqueIdInterface;
 
@@ -69,10 +69,10 @@ public final class Flight implements UniqueIdInterface, FlightInterface {
 
     //adds a Passenger to the Flight Object Passenger array and assigns Passenger a Seat based on SeatType
     @Override
-    public final boolean bookSeat(Passenger person, SeatType seatType) throws DoubleBookException {
+    public final boolean bookSeat(Passenger person, SeatType seatType) throws DuplicateBookingException {
         for (int i = 0; i < passengers.length; i++) {
             if (person.equals(passengers[i]))
-                throw new DoubleBookException("Passenger has already booked a seat!");
+                throw new DuplicateBookingException("Passenger has already booked a seat!");
         }
         if (getSeatsAvailable(seatType)) {
             switch (seatType) {
@@ -109,9 +109,9 @@ public final class Flight implements UniqueIdInterface, FlightInterface {
 
     //returns Passenger array from Flight Object if array is not empty
     @Override
-    public final Passenger[] getPassengers() throws NullPassengerException {
+    public final Passenger[] getPassengers() throws EmptyPassengerException {
         if (numPassengers == 0)
-            throw new NullPassengerException("Flight does not contain any passengers!");
+            throw new EmptyPassengerException("Flight does not contain any passengers!");
         return passengers;
     }
 

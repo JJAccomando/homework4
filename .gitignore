@@ -1,0 +1,5 @@
+# Ignore IntelliJ files
+/.idea
+# Default ignored files
+/shelf/
+/workspace.xml

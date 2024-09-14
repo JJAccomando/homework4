@@ -1,6 +1,6 @@
 package com.solvd.laba;
 
-import com.solvd.laba.customexceptions.DoubleBookException;
+import com.solvd.laba.customexceptions.DuplicateBookingException;
 import com.solvd.laba.myenums.*;
 
 public final class AirbusA380 extends AirplaneBase {
@@ -96,7 +96,7 @@ public final class AirbusA380 extends AirplaneBase {
                 FIRST_CLASS_SEATS[index].addPassenger(person);
                 try {
                     person.setSeatNum(FIRST_CLASS_SEATS[index]);
-                } catch (DoubleBookException e) {
+                } catch (DuplicateBookingException e) {
                     return false;
                 }
                 break;
@@ -105,7 +105,7 @@ public final class AirbusA380 extends AirplaneBase {
                 BUSINESS_CLASS_SEATS[index].addPassenger(person);
                 try {
                     person.setSeatNum(BUSINESS_CLASS_SEATS[index]);
-                } catch (DoubleBookException e) {
+                } catch (DuplicateBookingException e) {
                     return false;
                 }
                 break;
@@ -114,7 +114,7 @@ public final class AirbusA380 extends AirplaneBase {
                 ECONOMY_CLASS_SEATS[index].addPassenger(person);
                 try {
                     person.setSeatNum(ECONOMY_CLASS_SEATS[index]);
-                } catch (DoubleBookException e) {
+                } catch (DuplicateBookingException e) {
                     return false;
                 }
                 break;
